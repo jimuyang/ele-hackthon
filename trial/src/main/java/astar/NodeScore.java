@@ -1,6 +1,5 @@
 package astar;
 
-import javax.xml.soap.Node;
 import java.util.Objects;
 
 /**

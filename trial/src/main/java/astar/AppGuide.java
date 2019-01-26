@@ -1,12 +1,8 @@
 package astar;
 
-import sun.plugin.dom.core.CoreConstants;
-
-import javax.xml.soap.Node;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Stack;
 
 /**
  * @author: Jimu Yang

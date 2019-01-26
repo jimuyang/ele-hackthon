@@ -1,0 +1,7 @@
+round=100
+feastTime=5
+pacDotPoint=1
+powerPelletPoint=1
+pacmanPoint=5
+ghostPoint=5
+timeoutInMs=1000
