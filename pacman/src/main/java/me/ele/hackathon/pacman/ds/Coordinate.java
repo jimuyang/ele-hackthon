@@ -52,6 +52,8 @@ public class Coordinate { // 坐标
 
     }
 
-
-
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

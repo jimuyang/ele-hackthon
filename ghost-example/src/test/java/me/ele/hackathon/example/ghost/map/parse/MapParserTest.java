@@ -1,6 +1,7 @@
 package me.ele.hackathon.example.ghost.map.parse;
 
 import me.ele.hackathon.pacman.ds.Coordinate;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,24 +15,44 @@ public class MapParserTest {
 
     private MapParser mapParser;
 
-    @Test
-    public void testLoadMapFile() {
+
+    @Before
+    public void before() {
         MapParser mapParse = new MapParser();
         mapParse.loadFromFile();
         this.mapParser = mapParse;
-//        System.out.println(mapParse.getMap());
     }
+
+
+//    @Test
+//    public void testLoadMapFile() {
+//        MapParser mapParse = new MapParser();
+//        mapParse.loadFromFile();
+//        this.mapParser = mapParse;
+////        System.out.println(mapParse.getMap());
+//    }
 
 
     @Test
     public void testFindSites() {
-       this.testLoadMapFile();
-       List<Coordinate> sites = mapParser.findSites();
-       print(sites.size());
-//       sites.forEach(site -> print(site));
-       mapParser.showSites();
+//        List<Coordinate> sites = mapParser.findSites();
+//        print(sites.size());
+////       sites.forEach(site -> print(site));
+//        mapParser.showSites();
     }
 
+    @Test
+    public void testParseCoordinates() {
+        mapParser.parseCoordinates();
+        mapParser.showCoordinates();
+    }
+
+
+    @Test
+    public void testFindSegments() {
+        List<Segment> segments = mapParser.findSegments();
+        segments.forEach(mapParser::showSegment);
+    }
 
 
     public static void print(Object obj) {
