@@ -10,10 +10,11 @@ import me.ele.hackathon.pacman.ds.Coordinate;
  */
 public class Segment {
 
-
     private Coordinate start;
 
     private Coordinate end;
+
+    private IDirection dir;
 
     private int length;
 
@@ -24,15 +25,45 @@ public class Segment {
         this.start = start;
         this.end = end;
         this.coords = new Coordinate[]{start, end};
+        if (start.getY() == end.getY() && start.getX() == end.getX()) {
+            this.dir = null;
+            this.length = 0;
+            return;
+        }
 
         if (start.getX() == end.getX()) {
-            this.length = Math.abs(start.getY() - end.getY());
+            if (start.getY() > end.getY()) {
+                this.length = start.getY() - end.getY();
+                this.dir = Direction.DOWN;
+            } else {
+                this.length = end.getY() - start.getY();
+                this.dir = Direction.UP;
+            }
+
         } else if (start.getY() == end.getY()) {
-            this.length = Math.abs(start.getX() - end.getX());
+            if (start.getX() > end.getX()) {
+                this.length = start.getX() - end.getX();
+                this.dir = Direction.LEFT;
+            } else {
+                this.length = end.getX() - start.getX();
+                this.dir = Direction.RIGHT;
+            }
+
         } else {
             throw new RuntimeException("invalid segment");
         }
+    }
 
+
+    /**
+     * reverse the segment (direct update)
+     */
+    public Segment reverse() {
+        Coordinate temp = this.start;
+        this.start = this.end;
+        this.end = temp;
+        this.dir = this.dir.reverse();
+        return this;
     }
 
     public Coordinate getStart() {
@@ -67,4 +98,5 @@ public class Segment {
     public String toString() {
         return start.toString() + "-->" + start.toString();
     }
+
 }

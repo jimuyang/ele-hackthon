@@ -2,6 +2,8 @@ package me.ele.hackathon.pacman.ds;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * Created by lanjiangang on 2018/11/1.
  */
@@ -55,5 +57,19 @@ public class Coordinate { // 坐标
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordinate that = (Coordinate) o;
+        return x == that.x &&
+                y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
