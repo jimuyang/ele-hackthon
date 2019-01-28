@@ -1,4 +1,4 @@
-package me.ele.hackathon.example.ghost.map.parse;
+package me.ele.hackathon.example.ghost.map.parse.coord;
 
 /**
  * @author: Yang Fan

@@ -9,8 +9,8 @@ import java.util.Objects;
  */
 @Data
 public class Coordinate { // 坐标
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
 
     public Coordinate() {
     }

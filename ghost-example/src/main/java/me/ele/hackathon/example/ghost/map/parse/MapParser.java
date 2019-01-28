@@ -1,19 +1,18 @@
 package me.ele.hackathon.example.ghost.map.parse;
 
+import me.ele.hackathon.example.ghost.map.parse.coord.EndPoint;
+import me.ele.hackathon.example.ghost.map.parse.coord.Plot;
+//import me.ele.hackathon.example.ghost.map.parse.crash.Segment;
+import me.ele.hackathon.example.ghost.map.parse.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
 import me.ele.hackathon.pacman.ds.GameConfig;
 import me.ele.hackathon.pacman.ds.GameMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @author: Yang Fan
@@ -59,10 +58,10 @@ public class MapParser {
      */
     private List<Coordinate> deadEnds = new ArrayList<>();
 
-    /**
-     * 路径线段
-     */
-    private List<Segment> segments = new ArrayList<>();
+//    /**
+//     * 路径线段
+//     */
+//    private List<Segment> segments = new ArrayList<>();
 
     private GameMap mapCopy;
 
@@ -71,33 +70,101 @@ public class MapParser {
      * pixels [ width ] [ height ]
      */
 
+    public void parseMap() {
+        EndPoint[][] endPoints = new EndPoint[map.getWidth()][map.getHeight()];
 
-    public List<Segment> findSegments() {
-        int segLen = -1;
-        Coordinate start = null;
+        FillResult pass = new FillResult();
+
+
+        pass.segLen = -1;
+        pass.start = null;
+        // y++ 方向遍历
         for (int i = 0; i < map.getWidth(); i++) {
             for (int j = 0; j < map.getHeight(); j++) {
-                int t = map.getPixels()[i][j];
-                if (t != Plot.BARRIER) {
-                    if (segLen == -1) {
-                        // 新的端点
-                        segLen = 0;
-                        start = new Coordinate(i, j);
-                    } else {
-                        segLen++;
-                    }
-                } else {
-                    if (segLen > 0) {
-                        // 找到了线段
-                        segments.add(new Segment(start, new Coordinate(i, j - 1)));
-                    }
-                    segLen = -1;
-                    start = null;
-                }
+                fillEndPointMap(endPoints, new Coordinate(i, j), pass);
             }
         }
-        return this.segments;
+
+        pass.segLen = -1;
+        pass.start = null;
+        // x++ 方向遍历
+        for (int j = 0; j < map.getHeight(); j++) {
+            for (int i = 0; i < map.getWidth(); i++) {
+                fillEndPointMap(endPoints, new Coordinate(i, j), pass);
+            }
+        }
+
+        Arrays.stream(endPoints).forEach(endPoints1 -> Arrays.stream(endPoints).forEach(System.out::println));
     }
+
+
+    private class FillResult {
+        int segLen;
+        Coordinate start;
+    }
+
+    private void fillEndPointMap(EndPoint[][] endPoints, Coordinate current, FillResult pass) {
+        int type = judgeCoord(current);
+        switch (type) {
+            case Plot.DEADEND:
+            case Plot.CORNER:
+            case Plot.SITE:
+                if (pass.segLen == -1) {
+                    pass.segLen = 0;
+                    pass.start = current;
+                } else {
+                    // find
+                    Segment find = new Segment(pass.start, current);
+                    if (endPoints[current.getX()][current.getY()] == null) {
+                        endPoints[current.getX()][current.getY()] = new EndPoint(current.getX(), current.getY());
+                    }
+                    endPoints[current.getX()][current.getY()].add(find);
+
+                    if (endPoints[pass.start.getX()][pass.start.getY()] == null) {
+                        endPoints[pass.start.getX()][pass.start.getY()] = new EndPoint(pass.start.getX(), pass.start.getY());
+                    }
+                    endPoints[pass.start.getX()][pass.start.getY()].add(find);
+                }
+                break;
+            case Plot.COMMEN:
+                pass.segLen++;
+                break;
+            case Plot.BARRIER:
+                pass.segLen = -1;
+                pass.start = null;
+                break;
+            default:
+        }
+
+    }
+
+
+//    public List<Segment> findSegments() {
+//        int segLen = -1;
+//        Coordinate start = null;
+//        for (int i = 0; i < map.getWidth(); i++) {
+//            for (int j = 0; j < map.getHeight(); j++) {
+//                int t = map.getPixels()[i][j];
+//                if (t != Plot.BARRIER) {
+//                    if (segLen == -1) {
+//                        // 新的端点
+//                        segLen = 0;
+//                        start = new Coordinate(i, j);
+//                    } else {
+//                        segLen++;
+//                    }
+//                } else {
+//                    if (segLen > 0) {
+//                        // 找到了线段
+//                        segments.add(new Segment(start, new Coordinate(i, j - 1)));
+//                    }
+//                    segLen = -1;
+//                    start = null;
+//                }
+//            }
+//        }
+//        return this.segments;
+//    }
 
 
     public void parseCoordinates() {
@@ -107,7 +174,7 @@ public class MapParser {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Coordinate coord = new Coordinate(i, j);
-                switch (judgeCoord(coord, map)) {
+                switch (judgeCoord(coord)) {
                     case Plot.SITE:
                         this.sites.add(coord);
                         break;
@@ -147,21 +214,21 @@ public class MapParser {
         showMap(mapCopy, Arrays.asList(1, 9));
     }
 
-    public void showSegment(Segment segment) {
-        Coordinate start = segment.getStart();
-        Coordinate end = segment.getEnd();
-
-        if (start.getX() < end.getX()) {
-            for (int i = start.getX(); i <= end.getX(); i++) {
-                this.mapCopy.getPixels()[i][start.getY()] = 9;
-            }
-        } else {
-            for (int i = start.getY(); i <= end.getY(); i++) {
-                this.mapCopy.getPixels()[start.getX()][i] = 9;
-            }
-        }
-        showMap(mapCopy, Arrays.asList(1, 9));
-    }
+//    public void showSegment(Segment segment) {
+//        Coordinate start = segment.getStart();
+//        Coordinate end = segment.getEnd();
+//
+//        if (start.getX() < end.getX()) {
+//            for (int i = start.getX(); i <= end.getX(); i++) {
+//                this.mapCopy.getPixels()[i][start.getY()] = 9;
+//            }
+//        } else {
+//            for (int i = start.getY(); i <= end.getY(); i++) {
+//                this.mapCopy.getPixels()[start.getX()][i] = 9;
+//            }
+//        }
+//        showMap(mapCopy, Arrays.asList(1, 9));
+//    }
 
     public static void showMap(GameMap map, List<Integer> shown) {
         // 加载地图时 每次加载一行 现在也每次print一行
@@ -194,7 +261,8 @@ public class MapParser {
     }
 
 
-    public int judgeCoord(Coordinate coord, GameMap map) {
+    public int judgeCoord(Coordinate coord) {
+        GameMap map = this.map;
         int x = coord.getX(), y = coord.getY();
         int[][] pixels = map.getPixels();
         if (pixels[x][y] == Plot.BARRIER) {
@@ -240,5 +308,16 @@ public class MapParser {
 
     public GameMap getMap() {
         return map;
+    }
+
+
+    public int compare(int a, int b) {
+//        if (a >= b) {
+//            return a;
+//        } else {
+//            return b;
+//        }
+
+        return a >= b ? a : b;
     }
 }

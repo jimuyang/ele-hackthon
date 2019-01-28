@@ -1,6 +1,6 @@
 package me.ele.hackathon.example.ghost.map.parse;
 
-import me.ele.hackathon.pacman.ds.Coordinate;
+//import me.ele.hackathon.example.ghost.map.parse.crash.Segment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,10 +49,16 @@ public class MapParserTest {
 
 
     @Test
-    public void testFindSegments() {
-        List<Segment> segments = mapParser.findSegments();
-        segments.forEach(mapParser::showSegment);
+    public void testParseMap() {
+        mapParser.parseMap();
     }
+
+//
+//    @Test
+//    public void testFindSegments() {
+//        List<Segment> segments = mapParser.findSegments();
+//        segments.forEach(mapParser::showSegment);
+//    }
 
 
     public static void print(Object obj) {
