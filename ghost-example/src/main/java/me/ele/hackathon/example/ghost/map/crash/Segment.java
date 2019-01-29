@@ -1,7 +1,7 @@
-//package me.ele.hackathon.example.ghost.map.parse.crash;
+//package me.ele.hackathon.example.ghost.map.crash;
 //
-//import me.ele.hackathon.example.ghost.map.parse.Direction;
-//import me.ele.hackathon.example.ghost.map.parse.IDirection;
+//import me.ele.hackathon.example.ghost.map.Direction;
+//import me.ele.hackathon.example.ghost.map.IDirection;
 //import me.ele.hackathon.pacman.ds.Coordinate;
 //
 ///**

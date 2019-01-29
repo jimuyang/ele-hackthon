@@ -1,4 +1,4 @@
-package me.ele.hackathon.example.ghost.map.parse;
+package me.ele.hackathon.example.ghost.map;
 
 import me.ele.hackathon.pacman.ds.Coordinate;
 

@@ -1,8 +1,8 @@
-package me.ele.hackathon.example.ghost.map.parse;
+package me.ele.hackathon.example.ghost.map.parser;
 
-import me.ele.hackathon.example.ghost.map.parse.coord.EndPoint;
-import me.ele.hackathon.example.ghost.map.parse.coord.Plot;
-import me.ele.hackathon.example.ghost.map.parse.path.Segment;
+import me.ele.hackathon.example.ghost.map.coord.EndPoint;
+import me.ele.hackathon.example.ghost.map.coord.Plot;
+import me.ele.hackathon.example.ghost.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
 import me.ele.hackathon.pacman.ds.GameConfig;
 import me.ele.hackathon.pacman.ds.GameMap;
@@ -41,6 +41,7 @@ public class MapParser {
      * 解析结果
      ****************/
 
+    private EndPoint[][] endPointMap;
 
     /**
      * 定义通度3，4为站点
@@ -91,16 +92,23 @@ public class MapParser {
             }
         }
 
-        // 对EndPoint[][]进行延长
+        // 对EndPoint[][]进行延伸
         for (int i = 0; i < endPoints.length; i++) {
             for (int j = 0; j < endPoints[0].length; j++) {
                 extendEndPoint(endPoints[i][j], endPoints);
             }
         }
 
+        this.endPointMap = endPoints;
+
         this.showEndPoints(endPoints);
 //        Arrays.stream(endPoints).forEach(endPoints1 -> Arrays.stream(endPoints).forEach(System.out::println));
     }
+
+//    public void findPath2EndPoint(Coordinate start, EndPoint endPoint) {
+//
+//
+//    }
 
 
     private void showEndPoints(EndPoint[][] endPoints) {

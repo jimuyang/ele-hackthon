@@ -1,9 +1,7 @@
-package me.ele.hackathon.example.ghost.map.parse.coord;
+package me.ele.hackathon.example.ghost.map.coord;
 
-import me.ele.hackathon.example.ghost.map.parse.path.Segment;
+import me.ele.hackathon.example.ghost.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
-
-import java.util.Arrays;
 
 
 /**

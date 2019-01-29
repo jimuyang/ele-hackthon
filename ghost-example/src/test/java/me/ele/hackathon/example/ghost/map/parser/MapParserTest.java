@@ -1,10 +1,8 @@
-package me.ele.hackathon.example.ghost.map.parse;
+package me.ele.hackathon.example.ghost.map.parser;
 
-//import me.ele.hackathon.example.ghost.map.parse.crash.Segment;
+//import me.ele.hackathon.example.ghost.map.crash.Segment;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * @author: Yang Fan

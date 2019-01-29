@@ -1,8 +1,8 @@
-//package me.ele.hackathon.example.ghost.map.parse;
+//package me.ele.hackathon.example.ghost.map.parser;
 //
 //
-//import me.ele.hackathon.example.ghost.map.parse.path.PartPath;
-//import me.ele.hackathon.example.ghost.map.parse.path.Segment;
+//import me.ele.hackathon.example.ghost.path.PartPath;
+//import me.ele.hackathon.example.ghost.path.Segment;
 //import me.ele.hackathon.pacman.ds.Coordinate;
 //
 ///**

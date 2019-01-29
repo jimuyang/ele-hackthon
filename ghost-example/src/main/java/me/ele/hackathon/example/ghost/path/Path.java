@@ -1,5 +1,4 @@
-package me.ele.hackathon.example.ghost.map.parse.path;
-
+package me.ele.hackathon.example.ghost.path;
 
 /**
  * @author: Jimu Yang
