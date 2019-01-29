@@ -62,7 +62,8 @@ public class Coordinate { // 坐标
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Coordinate))
+            return false;
         Coordinate that = (Coordinate) o;
         return x == that.x &&
                 y == that.y;

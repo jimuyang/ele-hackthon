@@ -21,13 +21,31 @@ public class EndPoint extends Coordinate {
 
     private int tongree = 0;
 
+    private Coordinate[] accessibles;
+
+    private int[] accessCost;
+
     public EndPoint(int x, int y) {
         super(x, y);
         this.connectors = new Segment[4];
+        this.accessibles = new Coordinate[4];
+        this.accessCost = new int[4];
     }
 
     public void add(Segment segment) {
-        this.connectors[tongree++] = segment;
+        this.connectors[tongree] = segment;
+        this.accessibles[tongree] = segment.another(this);
+        this.accessCost[tongree] = segment.getLength();
+        tongree++;
+    }
+
+
+    public int[] getAccessCost() {
+        return accessCost;
+    }
+
+    public Coordinate[] getAccessibles() {
+        return accessibles;
     }
 
     public int getTongree() {
@@ -44,10 +62,13 @@ public class EndPoint extends Coordinate {
 
     @Override
     public String toString() {
-        return "EndPoint{" +
-                "connectors=" + Arrays.toString(connectors) +
-                ", x=" + x +
-                ", y=" + y +
-                '}';
+        String temp = String.format("%-20s", "EndPoint (" + x + ", " + y + ") ");
+
+        StringBuilder stringBuilder = new StringBuilder(temp + "access:");
+        for (int i = 0; i < tongree; i++) {
+            stringBuilder.append("(").append(accessibles[i].getX()).append(",").append(accessibles[i].getY()).append(")");
+        }
+        return stringBuilder.toString();
+//        return temp + "seg: " + Arrays.toString(connectors);
     }
 }

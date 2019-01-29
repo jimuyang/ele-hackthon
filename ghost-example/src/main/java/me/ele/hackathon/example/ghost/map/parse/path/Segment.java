@@ -71,6 +71,16 @@ public class Segment {
                 return coord.getX() >= coord1.getX() && coord.getX() <= coord2.getX();
             }
         }
-
     }
+
+
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public String toString() {
+        return coord1.toString() + "---" + coord2.toString();
+    }
+
 }

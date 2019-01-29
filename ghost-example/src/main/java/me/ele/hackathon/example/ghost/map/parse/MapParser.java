@@ -2,7 +2,6 @@ package me.ele.hackathon.example.ghost.map.parse;
 
 import me.ele.hackathon.example.ghost.map.parse.coord.EndPoint;
 import me.ele.hackathon.example.ghost.map.parse.coord.Plot;
-//import me.ele.hackathon.example.ghost.map.parse.crash.Segment;
 import me.ele.hackathon.example.ghost.map.parse.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
 import me.ele.hackathon.pacman.ds.GameConfig;
@@ -72,9 +71,7 @@ public class MapParser {
 
     public void parseMap() {
         EndPoint[][] endPoints = new EndPoint[map.getWidth()][map.getHeight()];
-
         FillResult pass = new FillResult();
-
 
         pass.segLen = -1;
         pass.start = null;
@@ -94,9 +91,89 @@ public class MapParser {
             }
         }
 
-        Arrays.stream(endPoints).forEach(endPoints1 -> Arrays.stream(endPoints).forEach(System.out::println));
+        // 对EndPoint[][]进行延长
+        for (int i = 0; i < endPoints.length; i++) {
+            for (int j = 0; j < endPoints[0].length; j++) {
+                extendEndPoint(endPoints[i][j], endPoints);
+            }
+        }
+
+        this.showEndPoints(endPoints);
+//        Arrays.stream(endPoints).forEach(endPoints1 -> Arrays.stream(endPoints).forEach(System.out::println));
     }
 
+
+    private void showEndPoints(EndPoint[][] endPoints) {
+        // show
+        for (int i = 0; i < endPoints.length; i++) {
+            for (int j = 0; j < endPoints[0].length; j++) {
+                if (endPoints[i][j] != null && endPoints[i][j].getTongree() != 2) {
+                    EndPoint site = endPoints[i][j];
+
+                    mapCopy.getPixels()[site.getX()][site.getY()] = 9;
+//                    Arrays.stream(site.getAccessibles()).forEach(access -> mapCopy.getPixels()[access.getX()][access.getY()] = 8);
+                    for (int k = 0; k < site.getTongree(); k++) {
+                        mapCopy.getPixels()[site.getAccessibles()[k].getX()][site.getAccessibles()[k].getY()] = 8;
+                    }
+
+                    showMap(mapCopy, Arrays.asList(1, 8, 9));
+
+                    mapCopy.getPixels()[site.getX()][site.getY()] = 0;
+//                    Arrays.stream(site.getAccessibles()).forEach(access -> mapCopy.getPixels()[access.getX()][access.getY()] = 0);
+                    for (int k = 0; k < site.getTongree(); k++) {
+                        mapCopy.getPixels()[site.getAccessibles()[k].getX()][site.getAccessibles()[k].getY()] = 0;
+                    }
+                }
+//                    System.out.println(endPoints[i][j]);
+            }
+        }
+    }
+
+
+    private void extendEndPoint(EndPoint start, EndPoint[][] endPoints) {
+        if (start == null || start.getTongree() == 2) {
+            return;
+        }
+        Coordinate temp;
+        Coordinate accCoord;
+        EndPoint toPoint;
+        EndPoint fromPoint;
+        int length = 0;
+
+        for (int i = 0; i < start.getTongree(); i++) {
+            fromPoint = start;
+            accCoord = start.getAccessibles()[i];
+            toPoint = endPoints[accCoord.getX()][accCoord.getY()];
+            length = start.getAccessCost()[i];
+            if (toPoint == null) {
+                throw new RuntimeException("accessible endpoint invalid");
+            }
+
+            int count = 0;
+            while (toPoint.getTongree() == 2) {
+                count++;
+                Segment[] connectors = toPoint.getConnectors();
+                if (connectors[0].have(fromPoint)) {
+                    temp = connectors[1].another(toPoint);
+                    fromPoint = toPoint;
+                    toPoint = endPoints[temp.getX()][temp.getY()];
+                    length += connectors[1].getLength();
+                } else {
+                    temp = connectors[0].another(toPoint);
+                    fromPoint = toPoint;
+                    toPoint = endPoints[temp.getX()][temp.getY()];
+                    length += connectors[0].getLength();
+                }
+
+                if (count > 5) {
+//                    throw new RuntimeException("wireless loop");
+                    System.out.println("wireless loop");
+                }
+            }
+            start.getAccessibles()[i] = toPoint;
+            start.getAccessCost()[i] = length;
+        }
+    }
 
     private class FillResult {
         int segLen;
@@ -124,6 +201,8 @@ public class MapParser {
                         endPoints[pass.start.getX()][pass.start.getY()] = new EndPoint(pass.start.getX(), pass.start.getY());
                     }
                     endPoints[pass.start.getX()][pass.start.getY()].add(find);
+                    pass.segLen = 0;
+                    pass.start = current;
                 }
                 break;
             case Plot.COMMEN:
@@ -311,13 +390,13 @@ public class MapParser {
     }
 
 
-    public int compare(int a, int b) {
-//        if (a >= b) {
-//            return a;
-//        } else {
-//            return b;
-//        }
-
-        return a >= b ? a : b;
-    }
+//    public int compare(int a, int b) {
+////        if (a >= b) {
+////            return a;
+////        } else {
+////            return b;
+////        }
+//
+//        return a >= b ? a : b;
+//    }
 }
