@@ -1,6 +1,7 @@
 package me.ele.hackathon.example.ghost.map.parser;
 
 //import me.ele.hackathon.example.ghost.map.crash.Segment;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +22,6 @@ public class MapParserTest {
         this.mapParser = mapParse;
     }
 
-
 //    @Test
 //    public void testLoadMapFile() {
 //        MapParser mapParse = new MapParser();
@@ -41,8 +41,8 @@ public class MapParserTest {
 
     @Test
     public void testParseCoordinates() {
-        mapParser.parseCoordinates();
-        mapParser.showCoordinates();
+//        mapParser.parseCoordinates();
+//        mapParser.showCoordinates();
     }
 
 

@@ -1,6 +1,8 @@
 package me.ele.hackathon.example.ghost.map.parser;
 
-import me.ele.hackathon.example.ghost.map.coord.EndPoint;
+import me.ele.hackathon.example.ghost.map.Direction;
+import me.ele.hackathon.example.ghost.map.coord.AccessPoint;
+import me.ele.hackathon.example.ghost.map.coord.Point;
 import me.ele.hackathon.example.ghost.map.coord.Plot;
 import me.ele.hackathon.example.ghost.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
@@ -9,7 +11,6 @@ import me.ele.hackathon.pacman.ds.GameMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,9 +23,7 @@ public class MapParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapParser.class);
 
-//    public static final String MAP_FILE_PATH = "/Users/muyi/learning/hackathon2018-pacman/ghost-example/src/main/resources/map1.txt";
-//
-//    public static final String CONFIG_FILE_PATH = "/Users/muyi/learning/hackathon2018-pacman/ghost-example/src/main/resources/config";
+    final String MAP_NAME = "/map1.txt";
 
     /**
      * 地图
@@ -41,22 +40,22 @@ public class MapParser {
      * 解析结果
      ****************/
 
-    private EndPoint[][] endPointMap;
+    private Point[][] pointMap;
 
-    /**
-     * 定义通度3，4为站点
-     */
-    private List<Coordinate> sites = new ArrayList<>();
-
-    /**
-     * 拐点 转角 通度为2且不在一个方向上
-     */
-    private List<Coordinate> corners = new ArrayList<>();
-
-    /**
-     * 定义通度0，1为死点
-     */
-    private List<Coordinate> deadEnds = new ArrayList<>();
+//    /**
+//     * 定义通度3，4为站点
+//     */
+//    private List<Coordinate> sites = new ArrayList<>();
+//
+//    /**
+//     * 拐点 转角 通度为2且不在一个方向上
+//     */
+//    private List<Coordinate> corners = new ArrayList<>();
+//
+//    /**
+//     * 定义通度0，1为死点
+//     */
+//    private List<Coordinate> deadEnds = new ArrayList<>();
 
 //    /**
 //     * 路径线段
@@ -71,15 +70,15 @@ public class MapParser {
      */
 
     public void parseMap() {
-        EndPoint[][] endPoints = new EndPoint[map.getWidth()][map.getHeight()];
-        FillResult pass = new FillResult();
+        Point[][] points = new Point[map.getWidth()][map.getHeight()];
+        FillPass pass = new FillPass();
 
         pass.segLen = -1;
         pass.start = null;
         // y++ 方向遍历
         for (int i = 0; i < map.getWidth(); i++) {
             for (int j = 0; j < map.getHeight(); j++) {
-                fillEndPointMap(endPoints, new Coordinate(i, j), pass);
+                fillEndPointMap(points, new Coordinate(i, j), pass);
             }
         }
 
@@ -88,71 +87,93 @@ public class MapParser {
         // x++ 方向遍历
         for (int j = 0; j < map.getHeight(); j++) {
             for (int i = 0; i < map.getWidth(); i++) {
-                fillEndPointMap(endPoints, new Coordinate(i, j), pass);
+                fillEndPointMap(points, new Coordinate(i, j), pass);
             }
         }
 
         // 对EndPoint[][]进行延伸
-        for (int i = 0; i < endPoints.length; i++) {
-            for (int j = 0; j < endPoints[0].length; j++) {
-                extendEndPoint(endPoints[i][j], endPoints);
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points[0].length; j++) {
+                extendEndPoint(points[i][j], points);
             }
         }
 
-        this.endPointMap = endPoints;
+        this.pointMap = points;
 
-        this.showEndPoints(endPoints);
-//        Arrays.stream(endPoints).forEach(endPoints1 -> Arrays.stream(endPoints).forEach(System.out::println));
+        this.showEndPoints(points);
+//        Arrays.stream(points).forEach(endPoints1 -> Arrays.stream(points).forEach(System.out::println));
     }
 
-//    public void findPath2EndPoint(Coordinate start, EndPoint endPoint) {
+//    public void findPath2EndPoint(Coordinate start, Point endPoint) {
 //
 //
 //    }
 
 
-    private void showEndPoints(EndPoint[][] endPoints) {
+    private void showEndPoints(Point[][] points) {
         // show
-        for (int i = 0; i < endPoints.length; i++) {
-            for (int j = 0; j < endPoints[0].length; j++) {
-                if (endPoints[i][j] != null && endPoints[i][j].getTongree() != 2) {
-                    EndPoint site = endPoints[i][j];
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points[0].length; j++) {
+//                if (points[i][j] != null) {
+//                    String str = String.format("%-30s", "located: " + points[i][j].getLocated());
+//                    System.out.println(points[i][j].toString() + " " + str);
+//                } else {
+//                    System.out.println("WALL (" + i + ", " + j + ")");
+//                }
+
+//                if (points[i][j] != null && points[i][j].getTongree() != 2 && points[i][j].getTongree() != 0) {
+                if (points[i][j] != null) {
+                    Point site = points[i][j];
 
                     mapCopy.getPixels()[site.getX()][site.getY()] = 9;
-//                    Arrays.stream(site.getAccessibles()).forEach(access -> mapCopy.getPixels()[access.getX()][access.getY()] = 8);
-                    for (int k = 0; k < site.getTongree(); k++) {
-                        mapCopy.getPixels()[site.getAccessibles()[k].getX()][site.getAccessibles()[k].getY()] = 8;
+                    for (int k = 0; k < site.getAccessNum(); k++) {
+                        mapCopy.getPixels()[site.getAccessPoints()[k].getCoord().getX()][site.getAccessPoints()[k].getCoord().getY()] = 8;
                     }
-
                     showMap(mapCopy, Arrays.asList(1, 8, 9));
 
                     mapCopy.getPixels()[site.getX()][site.getY()] = 0;
-//                    Arrays.stream(site.getAccessibles()).forEach(access -> mapCopy.getPixels()[access.getX()][access.getY()] = 0);
-                    for (int k = 0; k < site.getTongree(); k++) {
-                        mapCopy.getPixels()[site.getAccessibles()[k].getX()][site.getAccessibles()[k].getY()] = 0;
+                    for (int k = 0; k < site.getAccessNum(); k++) {
+                        mapCopy.getPixels()[site.getAccessPoints()[k].getCoord().getX()][site.getAccessPoints()[k].getCoord().getY()] = 0;
                     }
                 }
-//                    System.out.println(endPoints[i][j]);
             }
         }
     }
 
 
-    private void extendEndPoint(EndPoint start, EndPoint[][] endPoints) {
-        if (start == null || start.getTongree() == 2) {
+    private void extendEndPoint(Point start, Point[][] points) {
+        if (start == null)
             return;
-        }
+        start.parseLocated();
+
         Coordinate temp;
         Coordinate accCoord;
-        EndPoint toPoint;
-        EndPoint fromPoint;
-        int length = 0;
+        Point toPoint;
+        Point fromPoint;
+        int length;
 
-        for (int i = 0; i < start.getTongree(); i++) {
-            fromPoint = start;
-            accCoord = start.getAccessibles()[i];
-            toPoint = endPoints[accCoord.getX()][accCoord.getY()];
-            length = start.getAccessCost()[i];
+//        int accessNum = 0;
+//        // 解决located != null的延长
+//        if (start.getLocated() != null) {
+//            accessNum = 2;
+//        }
+//        // 解决corner site deadEnd的延长
+//        if (start.getTongree() > 0) {
+//            accessNum = start.getTongree();
+//        }
+
+        for (int i = 0; i < start.getAccessNum(); i++) {
+            if (start.getLocated() != null) {
+                // 解决中途点的延长
+                accCoord = start.getAccessPoints()[1 - i].getCoord();
+                fromPoint = points[accCoord.getX()][accCoord.getY()];
+            } else {
+                // 解决corner site deadEnd的延长
+                fromPoint = start;
+            }
+            accCoord = start.getAccessPoints()[i].getCoord();
+            toPoint = points[accCoord.getX()][accCoord.getY()];
+            length = start.getAccessPoints()[i].getCost();
             if (toPoint == null) {
                 throw new RuntimeException("accessible endpoint invalid");
             }
@@ -160,17 +181,18 @@ public class MapParser {
             int count = 0;
             while (toPoint.getTongree() == 2) {
                 count++;
-                Segment[] connectors = toPoint.getConnectors();
-                if (connectors[0].have(fromPoint)) {
-                    temp = connectors[1].another(toPoint);
+//                Segment[] connectors = toPoint.getConnectors();
+                AccessPoint[] accessPoints = toPoint.getAccessPoints();
+                if (accessPoints[0].getGo().have(fromPoint)) {
+                    temp = accessPoints[1].getGo().another(toPoint);
                     fromPoint = toPoint;
-                    toPoint = endPoints[temp.getX()][temp.getY()];
-                    length += connectors[1].getLength();
+                    toPoint = points[temp.getX()][temp.getY()];
+                    length += accessPoints[1].getGo().getLength();
                 } else {
-                    temp = connectors[0].another(toPoint);
+                    temp = accessPoints[0].getGo().another(toPoint);
                     fromPoint = toPoint;
-                    toPoint = endPoints[temp.getX()][temp.getY()];
-                    length += connectors[0].getLength();
+                    toPoint = points[temp.getX()][temp.getY()];
+                    length += accessPoints[0].getGo().getLength();
                 }
 
                 if (count > 5) {
@@ -178,17 +200,23 @@ public class MapParser {
                     System.out.println("wireless loop");
                 }
             }
-            start.getAccessibles()[i] = toPoint;
-            start.getAccessCost()[i] = length;
+            AccessPoint accessPoint = start.getAccessPoints()[i];
+            accessPoint.setCoord(toPoint);
+            accessPoint.setDir(Direction.get(fromPoint, toPoint));
+            accessPoint.setCost(length);
+//            start.getAccessibles()[i] = toPoint;
+//            start.getAccessCost()[i] = length;
+//            start.getAccessDir()[i] = Direction.get(fromPoint, toPoint);
         }
     }
 
-    private class FillResult {
+    private class FillPass {
         int segLen;
         Coordinate start;
+        Segment find;
     }
 
-    private void fillEndPointMap(EndPoint[][] endPoints, Coordinate current, FillResult pass) {
+    private void fillEndPointMap(Point[][] points, Coordinate current, FillPass pass) {
         int type = judgeCoord(current);
         switch (type) {
             case Plot.DEADEND:
@@ -197,28 +225,38 @@ public class MapParser {
                 if (pass.segLen == -1) {
                     pass.segLen = 0;
                     pass.start = current;
+                    pass.find = new Segment(current);
+//                    points[current.getX()][current.getY()].add(pass.find);
                 } else {
-                    // find
-                    Segment find = new Segment(pass.start, current);
-                    if (endPoints[current.getX()][current.getY()] == null) {
-                        endPoints[current.getX()][current.getY()] = new EndPoint(current.getX(), current.getY());
+                    // find segment
+//                    Segment find = new Segment(pass.start, current);
+                    pass.find.add(current);
+                    if (points[current.getX()][current.getY()] == null) {
+                        points[current.getX()][current.getY()] = new Point(current.getX(), current.getY());
                     }
-                    endPoints[current.getX()][current.getY()].add(find);
+                    points[current.getX()][current.getY()].add(pass.find);
 
-                    if (endPoints[pass.start.getX()][pass.start.getY()] == null) {
-                        endPoints[pass.start.getX()][pass.start.getY()] = new EndPoint(pass.start.getX(), pass.start.getY());
+                    if (points[pass.start.getX()][pass.start.getY()] == null) {
+                        points[pass.start.getX()][pass.start.getY()] = new Point(pass.start.getX(), pass.start.getY());
                     }
-                    endPoints[pass.start.getX()][pass.start.getY()].add(find);
+                    points[pass.start.getX()][pass.start.getY()].add(pass.find);
                     pass.segLen = 0;
                     pass.start = current;
+                    pass.find = new Segment(current);
+//                    points[current.getX()][current.getY()].add(pass.find);
                 }
                 break;
             case Plot.COMMEN:
                 pass.segLen++;
+                if (points[current.getX()][current.getY()] == null) {
+                    points[current.getX()][current.getY()] = new Point(current.getX(), current.getY());
+                }
+                points[current.getX()][current.getY()].setLocated(pass.find);
                 break;
             case Plot.BARRIER:
                 pass.segLen = -1;
                 pass.start = null;
+                pass.find = null;
                 break;
             default:
         }
@@ -254,52 +292,52 @@ public class MapParser {
 //    }
 
 
-    public void parseCoordinates() {
-        int height = map.getHeight(); // 每列有多少元素
-        int width = map.getWidth(); // 有多少列
+//    public void parseCoordinates() {
+//        int height = map.getHeight(); // 每列有多少元素
+//        int width = map.getWidth(); // 有多少列
+//
+//        for (int i = 0; i < width; i++) {
+//            for (int j = 0; j < height; j++) {
+//                Coordinate coord = new Coordinate(i, j);
+//                switch (judgeCoord(coord)) {
+//                    case Plot.SITE:
+//                        this.sites.add(coord);
+//                        break;
+//                    case Plot.CORNER:
+//                        this.corners.add(coord);
+//                        break;
+//                    case Plot.DEADEND:
+//                        this.deadEnds.add(coord);
+//                        break;
+//                    default:
+//                }
+//            }
+//        }
+//    }
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Coordinate coord = new Coordinate(i, j);
-                switch (judgeCoord(coord)) {
-                    case Plot.SITE:
-                        this.sites.add(coord);
-                        break;
-                    case Plot.CORNER:
-                        this.corners.add(coord);
-                        break;
-                    case Plot.DEADEND:
-                        this.deadEnds.add(coord);
-                        break;
-                    default:
-                }
-            }
-        }
-    }
-
-
-    public void showCoordinates() {
-        this.sites.forEach(site -> {
-            mapCopy.getPixels()[site.getX()][site.getY()] = 9;
-        });
-
-        this.deadEnds.forEach(site -> {
-            mapCopy.getPixels()[site.getX()][site.getY()] = 8;
-        });
-
-        this.corners.forEach(site -> {
-            mapCopy.getPixels()[site.getX()][site.getY()] = 7;
-        });
-
-        showMap(mapCopy, Arrays.asList(1, 7, 8, 9));
-    }
-
-    public void showSites() {
-        this.sites.forEach(site -> {
-            mapCopy.getPixels()[site.getX()][site.getY()] = 9;
-        });
-        showMap(mapCopy, Arrays.asList(1, 9));
-    }
+//
+//    public void showCoordinates() {
+//        this.sites.forEach(site -> {
+//            mapCopy.getPixels()[site.getX()][site.getY()] = 9;
+//        });
+//
+//        this.deadEnds.forEach(site -> {
+//            mapCopy.getPixels()[site.getX()][site.getY()] = 8;
+//        });
+//
+//        this.corners.forEach(site -> {
+//            mapCopy.getPixels()[site.getX()][site.getY()] = 7;
+//        });
+//
+//        showMap(mapCopy, Arrays.asList(1, 7, 8, 9));
+//    }
+//
+//    public void showSites() {
+//        this.sites.forEach(site -> {
+//            mapCopy.getPixels()[site.getX()][site.getY()] = 9;
+//        });
+//        showMap(mapCopy, Arrays.asList(1, 9));
+//    }
 
 //    public void showSegment(Segment segment) {
 //        Coordinate start = segment.getStart();
@@ -383,8 +421,8 @@ public class MapParser {
             config.loadFromInputStream(this.getClass().getResourceAsStream("/config"));
             this.config = config;
 
-            this.map = GameMap.load(this.getClass().getResourceAsStream("/map1.txt"));
-            this.mapCopy = GameMap.load(this.getClass().getResourceAsStream("/map1.txt"));
+            this.map = GameMap.load(this.getClass().getResourceAsStream(MAP_NAME));
+            this.mapCopy = GameMap.load(this.getClass().getResourceAsStream(MAP_NAME));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -397,7 +435,9 @@ public class MapParser {
         return map;
     }
 
-
+    public Point[][] getPointMap() {
+        return pointMap;
+    }
 //    public int compare(int a, int b) {
 ////        if (a >= b) {
 ////            return a;

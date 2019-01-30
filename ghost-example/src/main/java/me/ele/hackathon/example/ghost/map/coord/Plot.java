@@ -38,11 +38,23 @@ public interface Plot {
     int GHOST = 5;
 
 
+    /**
+     * 通度1/0
+     */
     int DEADEND = 11;
 
+    /**
+     * 拐角 通度2
+     */
     int CORNER = 12;
 
+    /**
+     * 通度为3/4
+     */
     int SITE = 13;
 
+    /**
+     * 中途点
+     */
     int COMMEN = 10;
 }

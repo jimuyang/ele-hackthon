@@ -2,13 +2,14 @@ package me.ele.hackathon.pacman.ds;
 
 import lombok.Data;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 /**
  * Created by lanjiangang on 2018/11/1.
  */
 @Data
-public class Coordinate { // 坐标
+public class Coordinate implements Comparable<Coordinate> { // 坐标
     protected int x;
     protected int y;
 
@@ -72,5 +73,17 @@ public class Coordinate { // 坐标
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+    }
+
+    public int mhdDistance(Coordinate another) {
+        return Math.abs(x - another.x) + Math.abs(y - another.y);
+    }
+
+    @Override
+    public int compareTo(Coordinate o) {
+        if (this.x != o.x) {
+            return this.x - o.x;
+        }
+        return this.y - o.y;
     }
 }

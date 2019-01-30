@@ -1,6 +1,9 @@
 package me.ele.hackathon.example.ghost.path;
 
+import me.ele.hackathon.example.ghost.map.Direction;
 import me.ele.hackathon.pacman.ds.Coordinate;
+
+import java.util.Objects;
 
 /**
  * @author: Jimu Yang
@@ -20,11 +23,13 @@ public class Segment {
 
     private boolean vertical;
 
-    public Segment(Coordinate coord1, Coordinate coord2) {
-        this.coord1 = coord1;
-        this.coord2 = coord2;
-        this.coords = new Coordinate[]{coord1, coord2};
+    public Segment(Coordinate coord) {
+        this.coord1 = coord;
+    }
 
+    public void add(Coordinate coord) {
+        this.coord2 = coord;
+        this.coords = new Coordinate[]{coord1, coord2};
         if (coord1.equals(coord2)) {
             throw new RuntimeException("invalid path: length = 0");
         }
@@ -36,6 +41,12 @@ public class Segment {
             this.length = Math.abs(coord1.getX() - coord2.getX());
             this.vertical = false;
         }
+
+    }
+
+    public Segment(Coordinate coord1, Coordinate coord2) {
+        this(coord1);
+        this.add(coord2);
     }
 
     public boolean have(Coordinate coord) {
@@ -73,9 +84,29 @@ public class Segment {
         }
     }
 
+//    public Direction from(Coordinate coord) {
+//
+//    }
+
+
+    public Coordinate getCoord1() {
+        return coord1;
+    }
+
+    public Coordinate getCoord2() {
+        return coord2;
+    }
+
+    public boolean isVertical() {
+        return vertical;
+    }
 
     public int getLength() {
         return length;
+    }
+
+    public Coordinate[] getCoords() {
+        return coords;
     }
 
     @Override
@@ -83,4 +114,17 @@ public class Segment {
         return coord1.toString() + "---" + coord2.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Segment segment = (Segment) o;
+        return Objects.equals(coord1, segment.coord1) &&
+                Objects.equals(coord2, segment.coord2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coord1, coord2);
+    }
 }

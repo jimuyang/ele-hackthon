@@ -74,4 +74,17 @@ public enum Direction implements IDirection {
     ;
 
 
+    public static Direction get(Coordinate from, Coordinate to) {
+        if (from.getX() < to.getX()) {
+            return RIGHT;
+        } else if (from.getX() > to.getX()) {
+            return LEFT;
+        } else if (from.getY() < to.getY()) {
+            return UP;
+        } else if (from.getY() > to.getY()) {
+            return DOWN;
+        }
+        return null;
+    }
+
 }
