@@ -29,6 +29,12 @@ public class PathNode implements Comparable<PathNode> {
         this.here = here;
     }
 
+    public PathNode(Coordinate here, PathNode from, int arriveCost) {
+        this.here = here;
+        this.from = from;
+        this.arriveCost = arriveCost;
+    }
+
     public PathNode(Coordinate here, PathNode from, int arriveCost, int targetCost) {
         this.here = here;
         this.from = from;

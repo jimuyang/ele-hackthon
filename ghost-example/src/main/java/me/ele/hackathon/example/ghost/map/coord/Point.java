@@ -117,6 +117,18 @@ public class Point extends Coordinate {
 //        this.connectors = new Segment[]{new Segment(this, accessibles[0]), new Segment(this, accessibles[1])};
     }
 
+    public AccessPoint findAccessPoint(Coordinate coord) {
+        for (AccessPoint accessPoint : accessPoints) {
+            if (accessPoint == null)
+                continue;
+            if (accessPoint.getCoord().equals(coord)) {
+                return accessPoint;
+            }
+        }
+        return null;
+    }
+
+
 //    public boolean sameAccessibles(Point other) {
 //        if (this.accessNum != other.accessNum)
 //            return false;
@@ -159,6 +171,7 @@ public class Point extends Coordinate {
     public AccessPoint[] getAccessPoints() {
         return accessPoints;
     }
+
 
     @Override
     public String toString() {

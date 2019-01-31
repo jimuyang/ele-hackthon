@@ -4,6 +4,7 @@ import me.ele.hackathon.example.ghost.map.Direction;
 import me.ele.hackathon.example.ghost.path.Segment;
 import me.ele.hackathon.pacman.ds.Coordinate;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Objects;
  * @descricption: want more.
  */
 public class AccessPoint implements Comparable<AccessPoint> {
+
+    public static final AccessPointComparator comparator = new AccessPointComparator();
 
     /**
      * 到达点
@@ -91,3 +94,18 @@ public class AccessPoint implements Comparable<AccessPoint> {
         return this.dir.ordinal() - o.dir.ordinal();
     }
 }
+
+class AccessPointComparator implements Comparator<AccessPoint> {
+
+    @Override
+    public int compare(AccessPoint o1, AccessPoint o2) {
+        if (o1 == null && o2 == null)
+            return 0;
+        if (o1 == null)
+            return 1;
+        if (o2 == null)
+            return -1;
+        return o1.compareTo(o2);
+    }
+}
+
