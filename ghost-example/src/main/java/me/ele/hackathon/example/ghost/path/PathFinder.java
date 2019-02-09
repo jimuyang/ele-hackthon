@@ -20,9 +20,36 @@ public class PathFinder {
     private AStar aStar;
 
 
-    public void init() {
+    public void init(MapParser mapParser) {
+        if (aStar == null) {
+            this.aStar = new AStar();
+        }
+        this.mapParser = mapParser;
         aStar.setPoints(mapParser.getPointMap());
     }
+
+    /**
+     * 寻找从起点到终点的最短路径
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    public Path findShortestPath(Coordinate start, Coordinate end) {
+        // 试试direct go
+        Point startPoint = this.getPoints()[start.getX()][start.getY()];
+        Point endPoint = this.getPoints()[end.getX()][end.getY()];
+
+        Path path = this.directGo(startPoint, endPoint);
+        // 这条路径也不一定是最短的
+
+//        if (path != null)
+//            return path;
+
+        return null;
+    }
+
+
     /**
      * 寻找从起点到终点的可选路径们
      *

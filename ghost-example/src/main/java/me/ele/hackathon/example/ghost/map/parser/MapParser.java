@@ -104,11 +104,6 @@ public class MapParser {
 //        Arrays.stream(points).forEach(endPoints1 -> Arrays.stream(points).forEach(System.out::println));
     }
 
-//    public void findPath2EndPoint(Coordinate start, Point endPoint) {
-//
-//
-//    }
-
 
     private void showEndPoints(Point[][] points) {
         // show
@@ -151,16 +146,6 @@ public class MapParser {
         Point toPoint;
         Point fromPoint;
         int length;
-
-//        int accessNum = 0;
-//        // 解决located != null的延长
-//        if (start.getLocated() != null) {
-//            accessNum = 2;
-//        }
-//        // 解决corner site deadEnd的延长
-//        if (start.getTongree() > 0) {
-//            accessNum = start.getTongree();
-//        }
 
         for (int i = 0; i < start.getAccessNum(); i++) {
             if (start.getLocated() != null) {
@@ -438,13 +423,5 @@ public class MapParser {
     public Point[][] getPointMap() {
         return pointMap;
     }
-//    public int compare(int a, int b) {
-////        if (a >= b) {
-////            return a;
-////        } else {
-////            return b;
-////        }
-//
-//        return a >= b ? a : b;
-//    }
+
 }
