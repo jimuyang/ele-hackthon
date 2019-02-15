@@ -36,15 +36,18 @@ public class PathFinder {
      * @return
      */
     public Path findShortestPath(Coordinate start, Coordinate end) {
-        // 试试direct go
+        if (start.equals(end)) {
+            // 起点终点是同一点
+            return new Path(start, end);
+        }
         Point startPoint = this.getPoints()[start.getX()][start.getY()];
         Point endPoint = this.getPoints()[end.getX()][end.getY()];
 
-        Path path = this.directGo(startPoint, endPoint);
-        // 这条路径也不一定是最短的
+        if (sameAccessPoints(startPoint, endPoint)) {
+            // 拥有相同的accessPoints说明是在同一段上
 
-//        if (path != null)
-//            return path;
+
+        }
 
         return null;
     }

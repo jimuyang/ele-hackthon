@@ -25,6 +25,30 @@ public class Path {
     private PathNode tail;
 
 
+    public Path() {
+
+    }
+
+    /**
+     * 简单的path
+     *
+     * @param start
+     * @param end
+     */
+    public Path(Coordinate start, Coordinate end) {
+        this.start = start;
+        this.end = end;
+        this.length = end.mhdDistance(start);
+        this.goDir = Direction.get(start, end);
+        this.arriveDir = Direction.get(end, start);
+        this.head = new PathNode(start);
+        this.tail = new PathNode(end);
+        this.head.setNext(this.tail);
+        this.tail.setFrom(this.head);
+
+    }
+
+
     public Coordinate getStart() {
         return start;
     }
